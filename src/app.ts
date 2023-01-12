@@ -1,5 +1,10 @@
 import yargs from 'yargs'
-import { splitEvenlyInSeconds, getVideoDuration, getVideoDurationForCwd, reduceVideoSize } from './commands'
+import {
+    splitEvenlyInSeconds,
+    getVideoDurationForCwd,
+    reduceVideoSize,
+    mergeVideos,
+} from './commands'
 
 yargs.command({
     command: 'vid',
@@ -47,27 +52,37 @@ yargs.command({
 })
 
 yargs.command({
+    command: 'vidmerge',
+    describe: 'merge a list of video files toegether',
+    builder: {
+        l: {
+            describe: 'Text file list of files to merge(MUST BE IN DIRECTORY)',
+            demandOption: true,
+            type: 'string',
+        },
+        o: {
+            describe: 'Output file',
+            demandOption: true,
+            type: 'string',
+        },
+    },
+    async handler({ l, o }) {
+        mergeVideos(String(l), String(o))
+    },
+})
+
+yargs.command({
     command: 'vidtime',
     describe: 'Get the time of a Videofile',
     builder: {
-        n: {
-            describe: 'Video name (MUST BE IN DIRECTORY)',
-            demandOption: false,
-            type: 'string',
-        },
         l: {
             describe: 'List videos and their sizes in a directory',
             demandOption: false,
             type: 'boolean',
         },
     },
-    async handler({ n, l }) {
-        if (n) {
-            await getVideoDuration(String(n))
-        }
-        if (l) {
-            await getVideoDurationForCwd()
-        }
+    async handler({ l }) {
+        if (l) await getVideoDurationForCwd()
     },
 })
 

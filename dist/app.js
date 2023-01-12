@@ -15,6 +15,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const yargs_1 = __importDefault(require("yargs"));
 const commands_1 = require("./commands");
 yargs_1.default.command({
+    command: 'vid',
+    describe: 'Video management utility tool',
+    builder: {
+        n: {
+            describe: 'Video name (MUST BE IN DIRECTORY)',
+            demandOption: false,
+            type: 'string',
+        },
+        l: {
+            describe: 'List videos and their sizes in a directory',
+            demandOption: false,
+            type: 'boolean',
+        },
+        s: {
+            describe: 'Will split a video after every X seconds',
+            demandOption: false,
+            type: 'number',
+        },
+        o: {
+            describe: 'Naming Scheme',
+            demandOption: false,
+            type: 'string',
+        },
+    },
+    handler({ n, l, s, o }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            (0, commands_1.reduceVideoSize)(String(n));
+        });
+    },
+});
+yargs_1.default.command({
     command: 'vidreduce',
     describe: 'Reduce the filesize and keep as much quality',
     builder: {
@@ -31,28 +62,40 @@ yargs_1.default.command({
     },
 });
 yargs_1.default.command({
+    command: 'vidmerge',
+    describe: 'merge a list of video files toegether',
+    builder: {
+        l: {
+            describe: 'Text file list of files to merge(MUST BE IN DIRECTORY)',
+            demandOption: true,
+            type: 'string',
+        },
+        o: {
+            describe: 'Output file',
+            demandOption: true,
+            type: 'string',
+        },
+    },
+    handler({ l, o }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            (0, commands_1.mergeVideos)(String(l), String(o));
+        });
+    },
+});
+yargs_1.default.command({
     command: 'vidtime',
     describe: 'Get the time of a Videofile',
     builder: {
-        n: {
-            describe: 'Video name (MUST BE IN DIRECTORY)',
-            demandOption: false,
-            type: 'string',
-        },
         l: {
             describe: 'List videos and their sizes in a directory',
             demandOption: false,
             type: 'boolean',
         },
     },
-    handler({ n, l }) {
+    handler({ l }) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (n) {
-                yield (0, commands_1.getVideoDuration)(String(n));
-            }
-            if (l) {
+            if (l)
                 yield (0, commands_1.getVideoDurationForCwd)();
-            }
         });
     },
 });
